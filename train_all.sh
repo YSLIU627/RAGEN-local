@@ -1,4 +1,11 @@
 set -e
+export RAY_START_WAIT_TIME_S=60
+export TOKENIZERS_PARALLELISM=True
+export NCCL_DEBUG='WARN'
+export VLLM_LOGGING_LEVEL='WARN'
+export HYDRA_FULL_ERROR=1
+export VLLM_ATTENTION_BACKEND=XFORMERS
+export WANDB_API_KEY=84f03efa3815c8727157b1951519ce4b0f2a190a
 
 # Section 1: Base Experiments
 USE_GRPO="algorithm.adv_estimator=grpo agent_proxy.reward_normalization.method=mean_std actor_rollout_ref.actor.use_kl_loss=True"

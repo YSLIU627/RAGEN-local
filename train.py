@@ -151,15 +151,13 @@ def run_ppo(config) -> None:
     print(f"CUDA_VISIBLE_DEVICES: {os.environ['CUDA_VISIBLE_DEVICES']}")
     os.environ["ENSURE_CUDA_VISIBLE_DEVICES"] = os.environ.get('CUDA_VISIBLE_DEVICES', '')
     if not ray.is_initialized():
+        ray.init(_system_config={"worker_register_timeout_seconds": 360}, _temp_dir=config.data.custom_temp_dir)
         # this is for local ray cluster
-        ray.init(runtime_env={
-            'env_vars': {
-                'TOKENIZERS_PARALLELISM': 'true',
-                'NCCL_DEBUG': 'WARN',
-                'VLLM_LOGGING_LEVEL': 'WARN',
-                "RAY_DEBUG": "legacy" # used here for simpler breakpoint()
-            }
-        })
+        #if config.data.custom_temp_dir:
+        #    os.makedirs(config.data.custom_temp_dir, exist_ok=True)
+        #    ray.init(_system_config={"worker_register_timeout_seconds": 360}, runtime_env={ 'env_vars': {'TOKENIZERS_PARALLELISM': 'true', 'NCCL_DEBUG': 'WARN','VLLM_LOGGING_LEVEL': 'WARN'}},_temp_dir=config.data.custom_temp_dir)
+        #else:
+        #    ray.init(_system_config={"worker_register_timeout_seconds": 360}, runtime_env={'env_vars': {'TOKENIZERS_PARALLELISM': 'true', 'NCCL_DEBUG': 'WARN','VLLM_LOGGING_LEVEL': 'WARN'}})
 
     runner = TaskRunner.remote()
     ray.get(runner.run.remote(config))

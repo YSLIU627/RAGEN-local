@@ -2,9 +2,6 @@ defaults:
   - ppo_trainer # this is a symbolic link to the verl/verl/trainer/config/ppo_trainer.yaml file
   - envs
 
-system:
-  CUDA_VISIBLE_DEVICES: "0"
-
 micro_batch_size_per_gpu: 4
 ppo_mini_batch_size: 32
 model_path: Qwen/Qwen2.5-0.5B-Instruct
@@ -83,7 +80,7 @@ data:
   max_prompt_length: null
   max_response_length: null
   train_batch_size: null
-
+  custom_temp_dir: False
 algorithm:
   gamma: 1.0
   lam: 1.0
@@ -94,7 +91,7 @@ algorithm:
     kl_coef: 0.000
 
 trainer:
-  project_name: ragen_latest
+  project_name: ragen_latest_qwen_0.5b_it
   experiment_name: test
   total_training_steps: 200
   validation_steps: 1 # validation instances = validation_steps * val_env_groups * group_size
