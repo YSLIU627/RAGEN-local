@@ -1,7 +1,8 @@
 defaults:
   - ppo_trainer # this is a symbolic link to the verl/verl/trainer/config/ppo_trainer.yaml file
   - envs
-
+system:
+  CUDA_VISIBLE_DEVICES: "0,1,2,3,4,5,6,7"
 micro_batch_size_per_gpu: 4
 ppo_mini_batch_size: 32
 model_path: Qwen/Qwen2.5-0.5B-Instruct
