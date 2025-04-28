@@ -2,7 +2,7 @@ defaults:
   - base
 
 
-micro_batch_size_per_gpu: 8
+micro_batch_size_per_gpu: 4
 
 actor_rollout_ref:
   rollout:

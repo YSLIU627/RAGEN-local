@@ -6,7 +6,7 @@ export VLLM_LOGGING_LEVEL='WARN'
 export HYDRA_FULL_ERROR=1
 export VLLM_ATTENTION_BACKEND=XFORMERS
 export WANDB_API_KEY=84f03efa3815c8727157b1951519ce4b0f2a190a
-
+#export WANDB_ENTITY=RLHF-zhihan
 
 MODEL_PATH='Qwen/Qwen2.5-7B-Instruct'
 
@@ -21,19 +21,27 @@ PROJECT_NAME='_2_sokoban'
 EXPERIMENT_NAME='PPO-Qwen2.5-7B-Instruct'
 # Section 4.1 - Filtering and critic
 # 0.25
+N=3  # 最大的 process 编号
 
-# 0.5
-TASK_NAME='_1_bandit'
-python train.py --config-name ${TASK_NAME} \
-        actor_rollout_ref.model.path=${MODEL_PATH} \
-        trainer.experiment_name=sokoban-ppo-rolloutfilter0.5 \
-        actor_rollout_ref.rollout.rollout_filter_ratio=0.5 \
-        data.custom_temp_dir='/fsx-project/zhihan0627/tmp' $USE_PPO \
-        trainer.experiment_name=${EXPERIMENT_NAME} \
-        trainer.project_name=${TASK_NAME} \
-        trainer.n_gpus_per_node=8 \
-        trainer.nnodes=1
+if [ $# -eq 0 ]; then
+    CASE=($(seq 1 $N))
+else
+    CASE=("$@")
+fi
 
+if [[ " ${CASE[@]} " =~ " 1 " ]]; then
+    TASK_NAME='_1_bandit'
+    python train.py --config-name ${TASK_NAME} \
+            actor_rollout_ref.model.path=${MODEL_PATH} \
+            trainer.experiment_name=sokoban-ppo-rolloutfilter0.5 \
+            actor_rollout_ref.rollout.rollout_filter_ratio=0.5 \
+            data.custom_temp_dir='/fsx-project/zhihan0627/tmp' $USE_PPO \
+            trainer.experiment_name=${EXPERIMENT_NAME} \
+            trainer.project_name=${TASK_NAME} \
+            trainer.n_gpus_per_node=8 \
+            trainer.nnodes=1
+fi
+if [[ " ${CASE[@]} " =~ " 2 " ]]; then
 TASK_NAME='_2_sokoban'
 python train.py --config-name ${TASK_NAME} \
         actor_rollout_ref.model.path=${MODEL_PATH} \
@@ -44,7 +52,9 @@ python train.py --config-name ${TASK_NAME} \
         trainer.project_name=${TASK_NAME} \
         trainer.n_gpus_per_node=8 \
         trainer.nnodes=1
+fi
 
+if [[ " ${CASE[@]} " =~ " 3 " ]]; then
 TASK_NAME='_3_frozen_lake'
 python train.py --config-name ${TASK_NAME} \
         actor_rollout_ref.model.path=${MODEL_PATH} \
@@ -55,18 +65,9 @@ python train.py --config-name ${TASK_NAME} \
         trainer.project_name=${TASK_NAME} \
         trainer.n_gpus_per_node=8 \
         trainer.nnodes=1
+fi
 
-TASK_NAME='_4_countdown'
-python train.py --config-name ${TASK_NAME} \
-        actor_rollout_ref.model.path=${MODEL_PATH} \
-        trainer.experiment_name=sokoban-ppo-rolloutfilter0.5 \
-        actor_rollout_ref.rollout.rollout_filter_ratio=0.5 \
-        data.custom_temp_dir='/fsx-project/zhihan0627/tmp' $USE_PPO \
-        trainer.experiment_name=${EXPERIMENT_NAME} \
-        trainer.project_name=${TASK_NAME} \
-        trainer.n_gpus_per_node=8 \
-        trainer.nnodes=1
-
+if [[ " ${CASE[@]} " =~ " 6 " ]]; then
 TASK_NAME='_6_webshop'
 python train.py --config-name ${TASK_NAME} \
         actor_rollout_ref.model.path=${MODEL_PATH} \
@@ -77,3 +78,4 @@ python train.py --config-name ${TASK_NAME} \
         trainer.project_name=${TASK_NAME} \
         trainer.n_gpus_per_node=8 \
         trainer.nnodes=1
+fi
